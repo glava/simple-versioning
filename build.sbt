@@ -1,3 +1,6 @@
+import sbtrelease._
+import sbtrelease.ReleaseStateTransformations._
+
 name := "simple-versioning"
 
 scalaVersion := "2.11.8"
@@ -28,3 +31,10 @@ def projectTemplate(projectName: String): Project = Project(projectName, file(pr
 lazy val scheduler = projectTemplate("scheduler")
 
 lazy val worker = projectTemplate("worker")
+
+releaseProcess := Seq(
+  checkSnapshotDependencies,
+  inquireVersions,
+  setReleaseVersion,
+  tagRelease
+)
