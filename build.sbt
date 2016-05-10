@@ -30,7 +30,6 @@ def projectTemplate(projectName: String): Project = Project(projectName, file(pr
     releaseProcess :=  Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
-      runTest,
       setReleaseVersion,
       commitReleaseVersion,
       tagRelease,
