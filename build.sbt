@@ -1,3 +1,4 @@
+import sbt._
 import sbtrelease._
 import sbtrelease.ReleaseStateTransformations._
 
@@ -23,6 +24,9 @@ def projectTemplate(projectName: String): Project = Project(projectName, file(pr
     outputStrategy := Some(StdoutOutput),
     test in assembly := {},
     git.useGitDescribe := true,
+    bintrayOrganization := Some("glava"),
+    bintrayRepository := "internal",
+    bintrayOmitLicense := true,
     git.baseVersion := "0.0.0",
     assemblyJarName in assembly := s"$projectName${gitVersionConversion(git.gitDescribedVersion.value)}.jar"
 )
@@ -32,8 +36,5 @@ lazy val scheduler = projectTemplate("scheduler")
 lazy val worker = projectTemplate("worker")
 
 releaseProcess := Seq(
-  checkSnapshotDependencies,
-  inquireVersions,
-  setReleaseVersion,
-  tagRelease
+  checkSnapshotDependencies
 )
