@@ -26,7 +26,7 @@ def projectTemplate(projectName: String): Project = Project(projectName, file(pr
     git.useGitDescribe := true,
     publishTo := None,
     git.baseVersion := "0.0.0",
-    assemblyJarName in assembly := s"$projectName${gitVersionConversion(git.gitDescribedVersion.value)}.jar",
+    assemblyJarName in assembly := s"$projectName-${gitVersionConversion(git.gitDescribedVersion.value)}.jar",
     releaseProcess :=  Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
