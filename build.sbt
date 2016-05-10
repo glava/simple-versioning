@@ -24,17 +24,24 @@ def projectTemplate(projectName: String): Project = Project(projectName, file(pr
     outputStrategy := Some(StdoutOutput),
     test in assembly := {},
     git.useGitDescribe := true,
-    bintrayOrganization := Some("glava"),
-    bintrayRepository := "internal",
-    bintrayOmitLicense := true,
+    publishTo := None,
     git.baseVersion := "0.0.0",
-    assemblyJarName in assembly := s"$projectName${gitVersionConversion(git.gitDescribedVersion.value)}.jar"
+    assemblyJarName in assembly := s"$projectName${gitVersionConversion(git.gitDescribedVersion.value)}.jar",
+    releaseProcess :=  Seq[ReleaseStep](
+      checkSnapshotDependencies,              // : ReleaseStep
+      inquireVersions,                        // : ReleaseStep
+      runTest,                                // : ReleaseStep
+      setReleaseVersion,                      // : ReleaseStep
+      commitReleaseVersion,                   // : ReleaseStep, performs the initial git checks
+      tagRelease,                             // : ReleaseStep
+      setNextVersion,                         // : ReleaseStep
+      commitNextVersion,                      // : ReleaseStep
+      pushChanges                             // : ReleaseStep, also checks that an upstream branch is properly configured
+    )
+
 )
+
 
 lazy val scheduler = projectTemplate("scheduler")
 
 lazy val worker = projectTemplate("worker")
-
-releaseProcess := Seq(
-  checkSnapshotDependencies
-)
