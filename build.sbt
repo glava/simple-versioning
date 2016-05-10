@@ -28,17 +28,16 @@ def projectTemplate(projectName: String): Project = Project(projectName, file(pr
     git.baseVersion := "0.0.0",
     assemblyJarName in assembly := s"$projectName${gitVersionConversion(git.gitDescribedVersion.value)}.jar",
     releaseProcess :=  Seq[ReleaseStep](
-      checkSnapshotDependencies,              // : ReleaseStep
-      inquireVersions,                        // : ReleaseStep
-      runTest,                                // : ReleaseStep
-      setReleaseVersion,                      // : ReleaseStep
-      commitReleaseVersion,                   // : ReleaseStep, performs the initial git checks
-      tagRelease,                             // : ReleaseStep
-      setNextVersion,                         // : ReleaseStep
-      commitNextVersion,                      // : ReleaseStep
-      pushChanges                             // : ReleaseStep, also checks that an upstream branch is properly configured
+      checkSnapshotDependencies,
+      inquireVersions,
+      runTest,
+      setReleaseVersion,
+      commitReleaseVersion,
+      tagRelease,
+      setNextVersion,
+      commitNextVersion,
+      pushChanges
     )
-
 )
 
 
