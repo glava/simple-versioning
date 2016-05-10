@@ -10,10 +10,9 @@ val VersionRegex = "([0-9]+.[0-9]+.[0-9]+)-?(.*)?".r
 def gitVersionConversion(version: Option[String]) = {
   println(version)
   version match {
-    case Some(VersionRegex(v, "SNAPSHOT")) => s"$v-SNAPSHOT"
-    case Some(VersionRegex(v, "")) => v
-    case Some(VersionRegex(v, s)) => s"$v-$s-SNAPSHOT"
-    case v => ""
+    case Some(VersionRegex(v, ""))          => v
+    case Some(VersionRegex(v, s))           => s"$v-$s-SNAPSHOT"
+    case None                               => s"-SNAPSHOT"
   }
 }
 
