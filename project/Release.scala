@@ -42,8 +42,7 @@ object Release {
   )
 
   val VersionRegex = "([0-9]+.[0-9]+.[0-9]+)-?(.*)?".r
-
-  def gitVersionConversion(version: String, gitDescription: Option[String]) = {
+  def assemblyVersion(version: String, gitDescription: Option[String]) = {
     gitDescription match {
       case Some(VersionRegex(v, ""))          => version
       case Some(VersionRegex(v, s))           => s"${version.replace("-SNAPSHOT", "")}-$s-SNAPSHOT"
