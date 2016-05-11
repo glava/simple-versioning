@@ -20,11 +20,16 @@ def gitVersionConversion(version: Option[String]) = {
 val mergeDevelop = ReleaseStep(action = st => {
   // extract the build state
   val extracted = Project.extract(st)
-  // retrieve the value of the organization SettingKey
-  val org = extracted.get(Keys.organization)
+
   val git = extracted.get(releaseVcs).get.asInstanceOf[Git]
-  if (org.startsWith("com.acme"))
-    sys.error("Hey, no need to release a toy project!")
+  val curBranch = (git.cmd("rev-parse", "--abbrev-ref", "HEAD") !!).trim
+
+  st.log.info(s"####### current branch: $curBranch")
+  git.cmd("checkout", "develop") ! st.log
+  git.cmd("pull", "origin", "develop") ! st.log
+  git.cmd("merge", "master") ! st.log
+  git.cmd("push", "origin", "master") ! st.log
+  git.cmd("checkout", "master") ! st.log
 
   st
 })
@@ -40,14 +45,14 @@ def projectTemplate(projectName: String): Project = Project(projectName, file(pr
     git.baseVersion := "0.0.0",
     assemblyJarName in assembly := s"$projectName-${gitVersionConversion(git.gitDescribedVersion.value)}.jar",
     releaseProcess :=  Seq[ReleaseStep](
-      /*checkSnapshotDependencies,
+      checkSnapshotDependencies,
       inquireVersions,
       setReleaseVersion,
       commitReleaseVersion,
       tagRelease,
       setNextVersion,
       commitNextVersion,
-      pushChanges,*/
+      pushChanges,
       mergeDevelop
     )
 )
