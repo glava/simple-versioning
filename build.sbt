@@ -20,5 +20,4 @@ def projectTemplate(projectName: String): Project = Project(projectName, file(pr
 releaseProcess := Release.customReleaseSteps
 
 lazy val scheduler = projectTemplate("scheduler")
-
 lazy val worker = projectTemplate("worker")
