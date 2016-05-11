@@ -23,14 +23,21 @@ val mergeDevelop = ReleaseStep(action = st => {
 
   val git = extracted.get(releaseVcs).get.asInstanceOf[Git]
   val curBranch = (git.cmd("rev-parse", "--abbrev-ref", "HEAD") !!).trim
-
-  st.log.info(s"####### current branch: $curBranch")
   git.cmd("checkout", "develop") ! st.log
   git.cmd("pull", "origin", "develop") ! st.log
   git.cmd("merge", "master") ! st.log
   git.cmd("push", "origin", "master") ! st.log
   git.cmd("checkout", "master") ! st.log
+  st.log.info("Develop merged with master")
+  st
+})
 
+val masterOnly = ReleaseStep(action = st => {
+  val extracted = Project.extract(st)
+
+  val git = extracted.get(releaseVcs).get.asInstanceOf[Git]
+  val curBranch = (git.cmd("rev-parse", "--abbrev-ref", "HEAD") !!).trim
+  st.log.info(curBranch)
   st
 })
 
@@ -45,6 +52,7 @@ def projectTemplate(projectName: String): Project = Project(projectName, file(pr
     git.baseVersion := "0.0.0",
     assemblyJarName in assembly := s"$projectName-${gitVersionConversion(git.gitDescribedVersion.value)}.jar",
     releaseProcess :=  Seq[ReleaseStep](
+      masterOnly,
       checkSnapshotDependencies,
       inquireVersions,
       setReleaseVersion,
