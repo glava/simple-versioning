@@ -37,7 +37,7 @@ val masterOnly = ReleaseStep(action = st => {
 
   val git = extracted.get(releaseVcs).get.asInstanceOf[Git]
   val curBranch = (git.cmd("rev-parse", "--abbrev-ref", "HEAD") !!).trim
-  st.log.info(curBranch)
+  if (curBranch != "master") throw new IllegalArgumentException("Releases are available from master branch")
   st
 })
 
