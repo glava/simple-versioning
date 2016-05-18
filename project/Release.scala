@@ -36,9 +36,7 @@ object Release {
     commitReleaseVersion,
     tagRelease,
     setNextVersion,
-    commitNextVersion,
-    pushChanges,
-    mergeDevelop
+    commitNextVersion
   )
 
   val VersionRegex = "([0-9]+.[0-9]+.[0-9]+)-?(.*)?".r
