@@ -1,4 +1,3 @@
-import com.typesafe.sbt.SbtGit
 import sbt.Project
 import sbtrelease.Git
 import sbtrelease.ReleasePlugin.autoImport._
@@ -50,14 +49,12 @@ object Release {
   )
 
 
-  def assemblyVersion(projectName: String) = {
-    val sbtVersion = sbt.Keys.version.value
-    val gitDescription = SbtGit.git.gitDescribedVersion.value
-    val VersionRegex = s"${sbt.Keys.projectID.value.name}-v([0-9]+.[0-9]+.[0-9]+)-?(.*)?".r
+  def assemblyVersion(version: String, gitDescription: Option[String], projectName: String) = {
+    val VersionRegex = s"${projectName}-v([0-9]+.[0-9]+.[0-9]+)-?(.*)?".r
     gitDescription match {
       case Some(VersionRegex(v, ""))              => v
-      case Some(VersionRegex(v, s)) if !s.isEmpty => s"${sbtVersion.replace("-SNAPSHOT", "")}-$s-SNAPSHOT"
-      case None                                   => sbtVersion
+      case Some(VersionRegex(v, s)) if !s.isEmpty => s"${version.replace("-SNAPSHOT", "")}-$s-SNAPSHOT"
+      case None                                   => version
     }
   }
 }
