@@ -15,7 +15,8 @@ def projectTemplate(projectName: String): Project = Project(projectName, file(pr
     git.baseVersion := "0.0.0",
     assemblyJarName in assembly := s"$projectName-${Release.assemblyVersion(version.value, git.gitDescribedVersion.value)}.jar",
     releaseProcess := Release.customReleaseSteps,
-    releaseUseGlobalVersion := false
+    releaseUseGlobalVersion := false,
+    releaseVersionFile := file(projectName + "/version.sbt")
   )
 
 releaseProcess := Release.customReleaseSteps
