@@ -48,8 +48,9 @@ object Release {
     pushChanges
   )
 
-  val VersionRegex = "([0-9]+.[0-9]+.[0-9]+)-?(.*)?".r
-  def assemblyVersion(version: String, gitDescription: Option[String]) = {
+
+  def assemblyVersion(version: String, gitDescription: Option[String], projectName: String) = {
+    val VersionRegex = s"${projectName}-v([0-9]+.[0-9]+.[0-9]+)-?(.*)?".r
     gitDescription match {
       case Some(VersionRegex(v, ""))              => v
       case Some(VersionRegex(v, s)) if !s.isEmpty => s"${version.replace("-SNAPSHOT", "")}-$s-SNAPSHOT"
