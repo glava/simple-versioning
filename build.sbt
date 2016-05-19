@@ -17,7 +17,7 @@ def projectTemplate(projectName: String): Project = Project(projectName, file(pr
     releaseProcess := Release.customReleaseSteps,
     releaseUseGlobalVersion := false,
     releaseVersionFile := file(projectName + "/version.sbt"),
-    releaseTagName := s"$projectName-v"
+    releaseTagName := s"$projectName-v${version.value}"
   )
 
 releaseProcess := Release.customReleaseSteps
