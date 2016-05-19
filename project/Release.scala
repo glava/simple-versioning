@@ -28,9 +28,17 @@ object Release {
     st
   })
 
+  val checkOrganization = ReleaseStep(action = st => {
+    // extract the build state
+    import sbt._
+    val extracted = Project.extract(st)
+
+    val file: File = new File(extracted.currentProject.base.absolutePath + "/version.sbt")
+    st.log.info(file.absolutePath)
+    st
+  })
+
   lazy val customReleaseSteps = Seq[ReleaseStep](
-    masterOnly,
-    checkSnapshotDependencies,
     inquireVersions,
     setReleaseVersion,
     commitReleaseVersion,
