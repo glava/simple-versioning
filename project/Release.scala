@@ -2,7 +2,7 @@ import sbt.Project
 import sbtrelease.Git
 import sbtrelease.ReleasePlugin.autoImport._
 import sbtrelease.ReleaseStateTransformations._
-
+import sbtassembly._
 object Release {
 
   lazy val mergeDevelop = ReleaseStep(action = st => {
@@ -18,10 +18,17 @@ object Release {
     st
   })
 
+  lazy val assembly2 = ReleaseStep(action = st => {
+    val extracted = Project.extract(st)
+    val (newState, env) = extracted.runTask(sbtassembly.AssemblyKeys.assembly, st)
+    newState
+  })
+
   lazy val customReleaseSteps = Seq[ReleaseStep](
     inquireVersions,
     setReleaseVersion,
     commitReleaseVersion,
+    assembly2,
     tagRelease,
     setNextVersion,
     commitNextVersion,
