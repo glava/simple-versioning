@@ -2,7 +2,7 @@ import sbt.Project
 import sbtrelease.Git
 import sbtrelease.ReleasePlugin.autoImport._
 import sbtrelease.ReleaseStateTransformations._
-import sbtassembly._
+import sbtassembly.AssemblyKeys._
 object Release {
 
   lazy val mergeDevelop = ReleaseStep(action = st => {
@@ -20,7 +20,8 @@ object Release {
 
   lazy val assembly2 = ReleaseStep(action = st => {
     val extracted = Project.extract(st)
-    val (newState, env) = extracted.runTask(sbtassembly.AssemblyKeys.assembly, st)
+    throw new IllegalArgumentException("fuck")
+    val (newState, env) = extracted.runTask(assembly, st)
     newState
   })
 
