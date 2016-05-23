@@ -18,17 +18,20 @@ object Release {
     st
   })
 
-  lazy val assembly2 = ReleaseStep(action = st => {
+  lazy val assembleJar = ReleaseStep(action = st => {
     val extracted = Project.extract(st)
-    val (newState, env) = extracted.runTask(assembly, st)
+    val (newState, _) = extracted.runTask(assembly, st)
     newState
   })
 
   lazy val customReleaseSteps = Seq[ReleaseStep](
+    checkSnapshotDependencies,
+    runClean,
+    runTest,
     inquireVersions,
     setReleaseVersion,
     commitReleaseVersion,
-    assembly2,
+    assembleJar,
     tagRelease,
     setNextVersion,
     commitNextVersion,
@@ -36,10 +39,9 @@ object Release {
     mergeDevelop
   )
 
-  def assemblyVersion(version: String, headCommit: Option[String]) = {
+  def assemblyVersion(version: String, headCommit: Option[String]) =
     headCommit match {
-      case Some(hash) if version.endsWith("-SNAPSHOT") => s"$version-$hash"
-      case _ => version
+      case Some(hash) if version.endsWith("-SNAPSHOT")  => s"$version-$hash"
+      case _                                            => version
     }
-  }
 }
