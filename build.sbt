@@ -13,8 +13,11 @@ def projectTemplate(projectName: String): Project = Project(projectName, file(pr
     git.useGitDescribe := true,
     publishTo := None,
     git.baseVersion := "0.0.0",
-    assemblyJarName in assembly := s"$projectName-${Release.assemblyVersion(version.value, git.gitDescribedVersion.value)}.jar",
-    releaseProcess := Release.customReleaseSteps
+    assemblyJarName in assembly := s"$projectName-${Release.assemblyVersion(version.value, git.gitDescribedVersion.value, projectName)}.jar",
+    releaseProcess := Release.customReleaseSteps,
+    releaseUseGlobalVersion := false,
+    releaseVersionFile := file(projectName + "/version.sbt"),
+    releaseTagName := s"$projectName-v${version.value}"
   )
 
 releaseProcess := Release.customReleaseSteps

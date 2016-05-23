@@ -28,19 +28,29 @@ object Release {
     st
   })
 
+  val checkOrganization = ReleaseStep(action = st => {
+    // extract the build state
+    import sbt._
+    val extracted = Project.extract(st)
+
+    val file: File = new File(extracted.currentProject.base.absolutePath + "/version.sbt")
+    st.log.info(file.absolutePath)
+    st
+  })
+
   lazy val customReleaseSteps = Seq[ReleaseStep](
-    masterOnly,
-    checkSnapshotDependencies,
     inquireVersions,
     setReleaseVersion,
     commitReleaseVersion,
     tagRelease,
     setNextVersion,
-    commitNextVersion
+    commitNextVersion,
+    pushChanges
   )
 
-  val VersionRegex = "([0-9]+.[0-9]+.[0-9]+)-?(.*)?".r
-  def assemblyVersion(version: String, gitDescription: Option[String]) = {
+
+  def assemblyVersion(version: String, gitDescription: Option[String], projectName: String) = {
+    val VersionRegex = s"${projectName}-v([0-9]+.[0-9]+.[0-9]+)-?(.*)?".r
     gitDescription match {
       case Some(VersionRegex(v, ""))              => v
       case Some(VersionRegex(v, s)) if !s.isEmpty => s"${version.replace("-SNAPSHOT", "")}-$s-SNAPSHOT"
