@@ -20,7 +20,6 @@ object Release {
 
   lazy val assembly2 = ReleaseStep(action = st => {
     val extracted = Project.extract(st)
-    throw new IllegalArgumentException("fuck")
     val (newState, env) = extracted.runTask(assembly, st)
     newState
   })
