@@ -49,12 +49,10 @@ object Release {
   )
 
 
-  def assemblyVersion(version: String, gitDescription: Option[String], projectName: String) = {
-    val VersionRegex = s"${projectName}-v([0-9]+.[0-9]+.[0-9]+)-?(.*)?".r
-    gitDescription match {
-      case Some(VersionRegex(v, ""))              => v
-      case Some(VersionRegex(v, s)) if !s.isEmpty => s"${version.replace("-SNAPSHOT", "")}-$s-SNAPSHOT"
-      case None                                   => version
+  def assemblyVersion(version: String, headCommit: Option[String]) = {
+    headCommit match {
+      case Some(hash) if version.endsWith("-SNAPSHOT") => s"$version-${hash.take(6)}"
+      case _ => version
     }
   }
 }
