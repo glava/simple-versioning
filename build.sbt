@@ -13,7 +13,7 @@ def projectTemplate(projectName: String): Project = Project(projectName, file(pr
     git.useGitDescribe := true,
     publishTo := None,
     git.baseVersion := "0.0.0",
-    assemblyJarName in assembly := s"$projectName-${Release.assemblyVersion(version.value, git.gitDescribedVersion.value, projectName)}.jar",
+    assemblyJarName in assembly := s"$projectName-${Release.assemblyVersion(version.value, git.gitHeadCommit.value)}.jar",
     releaseProcess := Release.customReleaseSteps,
     releaseUseGlobalVersion := false,
     releaseVersionFile := file(projectName + "/version.sbt"),
@@ -23,5 +23,4 @@ def projectTemplate(projectName: String): Project = Project(projectName, file(pr
 releaseProcess := Release.customReleaseSteps
 
 lazy val scheduler = projectTemplate("scheduler")
-
 lazy val worker = projectTemplate("worker")
