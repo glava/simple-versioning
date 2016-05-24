@@ -1,4 +1,5 @@
-import sbt.Project
+import sbt.Keys._
+import sbt.{Cross, Load, Project, State}
 import sbtrelease.Git
 import sbtrelease.ReleasePlugin.autoImport._
 import sbtrelease.ReleaseStateTransformations._
@@ -19,11 +20,36 @@ object Release {
     st
   })
 
-  lazy val assembleJar = ReleaseStep(action = st => {
+
+  lazy val assembleFinal: ReleaseStep = runCrossBuild(assembleJar.action)
+
+
+  lazy val assembleJar: ReleaseStep = ReleaseStep(action = st => {
     val extracted = Project.extract(st)
     val (newState, _) = extracted.runTask(assembly, st)
     newState
   })
+
+  private def switchScalaVersion(state: State, version: String): State = {
+    val x = Project.extract(state)
+    import x._
+    state.log.info("Setting scala version to " + version)
+    val add = (scalaVersion in sbt.GlobalScope := version) :: (scalaHome in sbt.GlobalScope := None) :: Nil
+    val cleared = session.mergeSettings.filterNot(Cross.crossExclude)
+    val newStructure = Load.reapply(add ++ cleared, structure)
+    Project.setProject(session, newStructure, state)
+  }
+
+  private def runCrossBuild(func: State => State): State => State = { state =>
+    val x = Project.extract(state)
+    import x._
+    val versions = Cross.crossVersions(state)
+    val current = scalaVersion in currentRef get structure.data
+    val finalS = (state /: versions) {
+      case (s, v) => func(switchScalaVersion(s, v))
+    }
+    current.map(switchScalaVersion(finalS, _)).getOrElse(finalS)
+  }
 
   lazy val customReleaseSteps = Seq[ReleaseStep](
     checkSnapshotDependencies,
@@ -32,13 +58,12 @@ object Release {
     inquireVersions,
     setReleaseVersion,
     commitReleaseVersion,
-    assembleJar,
+    assembleFinal,
     tagRelease,
     setNextVersion,
     commitNextVersion,
     pushChanges,
-    mergeDevelop,
-    publishArtifacts
+    mergeDevelop
   )
 
   def assemblyVersion(version: String, headCommit: Option[String]) =
