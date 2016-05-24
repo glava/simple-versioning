@@ -21,8 +21,7 @@ object Release {
   })
 
 
-  lazy val assembleFinal: ReleaseStep = runCrossBuild(assembleJar.action)
-
+  lazy val crossAssembly: ReleaseStep = runCrossBuild(assembleJar.action)
 
   lazy val assembleJar: ReleaseStep = ReleaseStep(action = st => {
     val extracted = Project.extract(st)
@@ -58,7 +57,7 @@ object Release {
     inquireVersions,
     setReleaseVersion,
     commitReleaseVersion,
-    assembleFinal,
+    crossAssembly,
     tagRelease,
     setNextVersion,
     commitNextVersion,

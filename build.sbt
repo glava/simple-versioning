@@ -5,7 +5,7 @@ name := "simple-versioning"
 scalaVersion := "2.11.8"
 
 def projectTemplate(projectName: String): Project = Project(projectName, file(projectName))
-  .enablePlugins(GitVersioning)
+  .enablePlugins(GitVersioning, BuildInfoPlugin)
   .settings(
     scalaVersion := "2.11.8",
     outputStrategy := Some(StdoutOutput),
@@ -19,7 +19,9 @@ def projectTemplate(projectName: String): Project = Project(projectName, file(pr
     releaseVersionFile := file(projectName + "/version.sbt"),
     releaseTagName := s"$projectName-v${version.value}",
     crossScalaVersions := Seq("2.10.6", "2.11.8"),
-    releaseCrossBuild := true
+    releaseCrossBuild := true,
+    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+    buildInfoPackage := "org.zardina"
   )
 
 
