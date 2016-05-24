@@ -37,7 +37,8 @@ object Release {
     setNextVersion,
     commitNextVersion,
     pushChanges,
-    mergeDevelop
+    mergeDevelop,
+    publishArtifacts
   )
 
   def assemblyVersion(version: String, headCommit: Option[String]) =
