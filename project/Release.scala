@@ -4,6 +4,7 @@ import sbtrelease.ReleasePlugin.autoImport._
 import sbtrelease.ReleaseStateTransformations._
 import sbtassembly.AssemblyKeys._
 object Release {
+  val HashSize: Int = 6
 
   lazy val mergeDevelop = ReleaseStep(action = st => {
     val extracted = Project.extract(st)
@@ -41,7 +42,7 @@ object Release {
 
   def assemblyVersion(version: String, headCommit: Option[String]) =
     headCommit match {
-      case Some(hash) if version.endsWith("-SNAPSHOT")  => s"$version-$hash"
+      case Some(hash) if version.endsWith("-SNAPSHOT")  => s"$version-${hash.take(HashSize)}"
       case _                                            => version
     }
 }
