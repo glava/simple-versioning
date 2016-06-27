@@ -30,7 +30,19 @@ object Release {
   })
 
   lazy val prepareApplicationConf: ReleaseStep = ReleaseStep(action = st => {
-    sbt.IO.copyFile(new java.io.File("worker/src/main/resources/application.conf"), new java.io.File("worker/src/main/resources/production.conf"))
+    sbt.IO.copyFile(
+      new java.io.File("worker/src/main/resources/production.conf"),
+      new java.io.File("worker/src/main/resources/application.conf")
+    )
+
+    st
+  })
+
+  lazy val revertingApplicationConf: ReleaseStep = ReleaseStep(action = st => {
+    val extracted = Project.extract(st)
+
+    val git = extracted.get(releaseVcs).get.asInstanceOf[Git]
+    git.cmd("checkout", "worker/src/main/resources") ! st.log
     st
   })
 
@@ -64,6 +76,7 @@ object Release {
     commitReleaseVersion,
     prepareApplicationConf,
     crossAssembly,
+    revertingApplicationConf,
     tagRelease,
     setNextVersion,
     commitNextVersion,
