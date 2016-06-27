@@ -1,5 +1,5 @@
 import sbt.Keys._
-import sbt.{Cross, Load, Project, State}
+import sbt.{Cross, Extracted, Load, Project, State}
 import sbtrelease.Git
 import sbtrelease.ReleasePlugin.autoImport._
 import sbtrelease.ReleaseStateTransformations._
@@ -27,6 +27,11 @@ object Release {
     val extracted = Project.extract(st)
     val (newState, _) = extracted.runTask(assembly, st)
     newState
+  })
+
+  lazy val prepareApplicationConf: ReleaseStep = ReleaseStep(action = st => {
+    sbt.IO.copyFile(new java.io.File("worker/src/main/resources/application.conf"), new java.io.File("worker/src/main/resources/production.conf"))
+    st
   })
 
   private def switchScalaVersion(state: State, version: String): State = {
@@ -57,6 +62,7 @@ object Release {
     inquireVersions,
     setReleaseVersion,
     commitReleaseVersion,
+    prepareApplicationConf,
     crossAssembly,
     tagRelease,
     setNextVersion,
